@@ -10,7 +10,7 @@ doctrine-read-only-hydrator
 
 When you retrieve data with Doctrine, you can get an array with values, or a fully hydrated object.
 
-Hydratation is a very slow process, who return same instance of entity if several hydratations have same entity to hydrate. 
+Hydration is a very slow process, who return same instance of entity if several hydrations have same entity to hydrate. 
 It's fine when you want to insert / update / delete your entity. But when you just want to retrieve data without editing it (to show it in list for example), it's way to slow.
 
 If you want to really retrieve data from your database, and don't get UnitOfWork reference, with Doctrine hydration you can't, cause each request will not hydrate a new entity with data taken in your query, it will return the first hydrated entity.
@@ -20,6 +20,23 @@ So, in case you don't need to modify your entity, you want to be really faster, 
 This hydrated entities can't be persisted / flushed and nothing will be lazy loaded : it's not the goal of this hydration ! Choose when you need Doctrine hydrator, and when you need ReadOnlyHydrator.
 
 [Changelog](changelog.md)
+
+Benchmark
+---------
+
+This table show simple benchmark results (time and memory_get_peak_usage()), with 30, 1000 and 5000 entities retrieved from a MySQL 5.7 database, PHP 5.6.23 and Doctrine 2.5.4.
+
+getArrayResult() return an array, used by ReadOnlyHydrator::hydrate() to make it's hydration. getResult() is equivalent to getArrayResult() + Doctrine hydration.
+
+memory_get_peak_usage() in ReadOnlyHydrator::hydrate() is the addition of getArrayResult() and ReadOnlyHydrator::hydrate(), but memory_get_peak_usage() in getResult() is only getResult().
+
+| Entities | getArrayResult() | ReadOnlyHydrator::hydrate() | getResult() |
+| -------- | ---------------- | --------------------------- | ----------- |
+| 30 | 1 ms, 15 Mo | 0 ms, 16 Mo | 8 ms, 18 Mo |
+| 1000 | 27 ms, 18 Mo | 31 ms, 24 Mo | 120 ms, 31 Mo |
+| 5000 | 125 ms, 30 Mo | 114 ms, 54 Mo | 681 ms, 86 Mo |
+
+As expected, getArrayResult() is the fastest way to retrieve data. But, you have to work with array, so you can't use entity methods.
 
 Example
 -------
