@@ -24,7 +24,6 @@ Example
 
 ```php
 # Foo\Repository\BarRepository
-
 class BarRepository
 {
     public function getReadOnlyUser($id)
@@ -39,7 +38,8 @@ class BarRepository
             # getArrayResult() will not hydrate anything, it's the fastest way to get data
             ->getArrayResult();
 
-        # return a really new User instance, hydrated with database data, who can't be persisted or flushed
+        # return a really new User instance, hydrated with database data,
+        # who can't be persisted or flushed
         return ReadOnlyHydrator::hydrate($this->_em, $this->getClassName(), $result[0]);
     }
 }
