@@ -19,6 +19,8 @@ So, in case you don't need to modify your entity, you want to be really faster, 
 
 This hydrated entities can't be persisted / flushed and nothing will be lazy loaded : it's not the goal of this hydration ! Choose when you need Doctrine hydrator, and when you need ReadOnlyHydrator.
 
+[Changelog](changelog.md)
+
 Example
 -------
 
