@@ -1,0 +1,5 @@
+services:
+    read_only_hydrator.event_subscriber:
+        class: steevanb\DoctrineReadOnlyHydrator\EventSubscriber\ReadOnlySubscriber
+        tags:
+            - { name: doctrine.event_subscriber }
