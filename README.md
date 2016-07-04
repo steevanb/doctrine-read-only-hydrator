@@ -60,7 +60,7 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         $bundles = [
-            new \steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony2\ReadOnlyHydratorBundle()
+            new steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony2\ReadOnlyHydratorBundle()
         ];
     }
 }
@@ -75,7 +75,7 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         $bundles = [
-            new \steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3\ReadOnlyHydratorBundle()
+            new steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3\ReadOnlyHydratorBundle()
         ];
     }
 }
