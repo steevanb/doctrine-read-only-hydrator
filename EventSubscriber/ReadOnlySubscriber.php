@@ -6,9 +6,9 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
+use steevanb\DoctrineReadOnlyHydrator\Entity\ReadOnlyEntityInterface;
 use steevanb\DoctrineReadOnlyHydrator\Exception\ReadOnlyEntityCantBeFlushedException;
 use steevanb\DoctrineReadOnlyHydrator\Exception\ReadOnlyEntityCantBePersistedException;
-use steevanb\DoctrineReadOnlyHydrator\Hydrator\ReadOnlyHydrator;
 
 class ReadOnlySubscriber implements EventSubscriber
 {
@@ -26,7 +26,7 @@ class ReadOnlySubscriber implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-        if (isset($args->getObject()->{ReadOnlyHydrator::READ_ONLY_PROPERTY})) {
+        if ($this->isReadOnlyEntity($args->getObject())) {
             throw new ReadOnlyEntityCantBePersistedException($args->getObject());
         }
     }
@@ -44,9 +44,18 @@ class ReadOnlySubscriber implements EventSubscriber
             $unitOfWork->getScheduledEntityDeletions()
         );
         foreach ($entities as $entity) {
-            if (isset($entity->{ReadOnlyHydrator::READ_ONLY_PROPERTY})) {
+            if ($this->isReadOnlyEntity($entity)) {
                 throw new ReadOnlyEntityCantBeFlushedException($entity);
             }
         }
+    }
+
+    /**
+     * @param object $entity
+     * @return bool
+     */
+    protected function isReadOnlyEntity($entity)
+    {
+        return $entity instanceof ReadOnlyEntityInterface;
     }
 }
