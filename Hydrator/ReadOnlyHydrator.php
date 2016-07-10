@@ -2,81 +2,15 @@
 
 namespace steevanb\DoctrineReadOnlyHydrator\Hydrator;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\Common\Proxy\ProxyGenerator;
-use Doctrine\ORM\Internal\Hydration\ArrayHydrator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use steevanb\DoctrineReadOnlyHydrator\Entity\ReadOnlyEntityInterface;
-use steevanb\DoctrineReadOnlyHydrator\Exception\MethodNotFoundException;
 use steevanb\DoctrineReadOnlyHydrator\Exception\PrivateMethodShouldNotAccessPropertiesException;
 
-class ReadOnlyHydrator extends ArrayHydrator
+class ReadOnlyHydrator extends SimpleObjectHydrator
 {
     const HYDRATOR_NAME = 'readOnly';
-
-    /**
-     * @param array $data
-     * @param array $result
-     */
-    protected function hydrateRowData(array $data, array &$result)
-    {
-        $arrayData = array();
-        parent::hydrateRowData($data, $arrayData);
-
-        $rootAlias = key($this->getPrivatePropertyValue(ArrayHydrator::class, '_rootAliases', $this));
-        $result[] = $this->hydrateRowDataReadOnly($this->_rsm->aliasMap[$rootAlias], $arrayData[0]);
-    }
-
-    /**
-     * @param string $className
-     * @param array $data
-     * @return object
-     * @throws \Exception
-     */
-    protected function hydrateRowDataReadOnly($className, array $data)
-    {
-        $classMetaData = $this->_em->getClassMetadata($className);
-        $mappings = $classMetaData->getAssociationMappings();
-        $entity = $this->createEntity($classMetaData, $data);
-        $reflection = new \ReflectionObject($entity);
-
-        foreach ($data as $name => $value) {
-            if (array_key_exists($name, $mappings)) {
-                $mapping = $mappings[$name];
-                switch ($mapping['type']) {
-                    case ClassMetadata::ONE_TO_ONE:
-                        $value = $this->hydrateOneToOne($mapping, $value);
-                        break;
-                    case ClassMetadata::ONE_TO_MANY:
-                        $value = $this->hydrateOneToMany($mapping, $value);
-                        break;
-                    case ClassMetadata::MANY_TO_ONE:
-                        $value = $this->hydrateManyToOne($mapping, $value);
-                        break;
-                    case ClassMetadata::MANY_TO_MANY:
-                        $value = $this->hydrateManyToMany($mapping, $value);
-                        break;
-                    default:
-                        throw new \Exception('Unknow mapping type "' . $mapping['type'] . '".');
-                }
-            }
-
-            if (
-                $classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE
-                && isset($entity->$name) === false
-            ) {
-                continue;
-            }
-            $property = $reflection->getProperty($name);
-            $isAccessible = $property->isPublic() === false;
-            $property->setAccessible(true);
-            $property->setValue($entity, $value);
-            $property->setAccessible($isAccessible);
-        }
-
-        return $entity;
-    }
 
     /**
      * @param ClassMetadata $classMetaData
@@ -86,60 +20,39 @@ class ReadOnlyHydrator extends ArrayHydrator
      */
     protected function createEntity(ClassMetadata $classMetaData, array $data)
     {
-        switch ($classMetaData->inheritanceType) {
-            case ClassMetadata::INHERITANCE_TYPE_NONE:
-                $className = $classMetaData->name;
-                break;
-            case ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE:
-                if (array_key_exists($classMetaData->discriminatorColumn['name'], $data) === false) {
-                    $exception = 'Discriminator column "' . $classMetaData->discriminatorColumn['name'] . '" ';
-                    $exception .= 'for "' . $classMetaData->name . '" does not exists in $data.';
-                    throw new \Exception($exception);
-                }
-                $discriminator = $data[$classMetaData->discriminatorColumn['name']];
-                $className = $classMetaData->discriminatorMap[$discriminator];
-                break;
-            default:
-                throw new \Exception('Unknow inheritance type "' . $classMetaData->inheritanceType . '".');
-        }
+        $className = $this->getEntityClassName($classMetaData, $data);
+//        $this->generateProxyFile($classMetaData, $data);
 
-        $methods = array();
-        $reflection = new \ReflectionClass($className);
-        $properties = array_merge($classMetaData->getFieldNames(), array_keys($classMetaData->associationMappings));
-        foreach ($reflection->getMethods() as $method) {
-            if ($method->getName() === '__construct') {
-                continue;
-            }
+        require_once($this->getProxyFilePath($className));
+        $proxyClassName = $this->getProxyNamespace($className) . '\\' . $this->getProxyClassName($className);
+        $entity = new $proxyClassName(array_keys($data));
 
-            $usedProperties = $this->getUsedProperties($method, $properties);
-            if (count($usedProperties) > 0) {
-                if ($method->isPrivate()) {
-                    throw new PrivateMethodShouldNotAccessPropertiesException(
-                        $className,
-                        $method->getName(),
-                        $usedProperties
-                    );
-                }
+        return $entity;
+    }
 
-                $methods[] = $this->createProxyMethod($method, $usedProperties);
-            }
-        }
-
-        $methodCode = implode("\n\n", $methods);
-        $namespace = substr($classMetaData->getName(), 0, strrpos($classMetaData->getName(), '\\'));
-        $shortClassName = substr($classMetaData->getName(), strrpos($classMetaData->getName(), '\\') + 1);
+    /**
+     * @param ClassMetadata $classMetaData
+     * @param array $data
+     * @return $this
+     */
+    protected function generateProxyFile(ClassMetadata $classMetaData, array $data)
+    {
+        $entityClassName = $this->getEntityClassName($classMetaData, $data);
+        $proxyMethodsCode = implode("\n\n", $this->getPhpForProxyMethods($classMetaData, $entityClassName));
+        $proxyNamespace = $this->getProxyNamespace($entityClassName);
+        $proxyClassName = $this->getProxyClassName($entityClassName);
         $generator = static::class;
         $readOnlyInterface = ReadOnlyEntityInterface::class;
 
         $php = <<<PHP
 <?php
 
-namespace ReadOnlyProxies\__CG__\\$namespace;
+namespace $proxyNamespace;
 
 /**
  * DO NOT EDIT THIS FILE - IT WAS CREATED BY $generator
  */
-class $shortClassName extends $className implements $readOnlyInterface
+class $proxyClassName extends \\$entityClassName implements \\$readOnlyInterface
 {
     protected \$loadedProperties;
 
@@ -148,83 +61,50 @@ class $shortClassName extends $className implements $readOnlyInterface
         \$this->loadedProperties = \$loadedProperties;
     }
 
-$methodCode
+$proxyMethodsCode
+
+    protected function assertReadOnlyPropertiesAreLoaded(array \$properties)
+    {
+        foreach (\$properties as \$property) {
+            if (in_array(\$property, \$this->loadedProperties) === false) {
+                throw new \steevanb\DoctrineReadOnlyHydrator\Exception\PropertyNotLoadedException(\$this, \$property);
+            }
+        }
+    }
 }
 PHP;
-        !dd($php);
+        file_put_contents($this->getProxyFilePath($entityClassName), $php);
 
-
-
-        $entity = (new \ReflectionClass($className))->newInstanceWithoutConstructor();
-
-        return $entity;
+        return $this;
     }
 
     /**
-     * @param array $mapping
-     * @param array $data
-     * @return ArrayCollection
+     * @param string $entityClassName
+     * @return string
      */
-    protected function hydrateOneToOne(array $mapping, $data)
+    protected function getProxyFilePath($entityClassName)
     {
-        return $this->hydrateRowDataReadOnly($mapping['targetEntity'], $data);
+        $fileName = str_replace('\\', '_', $entityClassName) . '.php';
+
+        return $this->getProxyDirectory() . DIRECTORY_SEPARATOR . $fileName;
     }
 
     /**
-     * @param array $mapping
-     * @param array $data
-     * @return ArrayCollection
+     * @param string $entityClassName
+     * @return string
      */
-    protected function hydrateOneToMany(array $mapping, $data)
+    protected function getProxyNamespace($entityClassName)
     {
-        $entities = [];
-        foreach ($data as $linkedData) {
-            $entities[] = $this->hydrateRowDataReadOnly($mapping['targetEntity'], $linkedData);
-        }
-
-        return new ArrayCollection($entities);
+        return 'ReadOnlyProxies\\' . substr($entityClassName, 0, strrpos($entityClassName, '\\'));
     }
 
     /**
-     * @param array $mapping
-     * @param array $data
-     * @return ArrayCollection
+     * @param string $entityClassName
+     * @return string
      */
-    protected function hydrateManyToOne(array $mapping, $data)
+    protected function getProxyClassName($entityClassName)
     {
-        return $this->hydrateRowDataReadOnly($mapping['targetEntity'], $data);
-    }
-
-    /**
-     * @param array $mapping
-     * @param array $data
-     * @return ArrayCollection
-     */
-    protected function hydrateManyToMany(array $mapping, $data)
-    {
-        $entities = [];
-        foreach ($data as $linkedData) {
-            $entities[] = $this->hydrateRowDataReadOnly($mapping['targetEntity'], $linkedData);
-        }
-
-        return new ArrayCollection($entities);
-    }
-
-    /**
-     * @param string $className
-     * @param string $property
-     * @param object $object
-     * @return mixed
-     */
-    protected function getPrivatePropertyValue($className, $property, $object)
-    {
-        $reflection = new \ReflectionProperty($className, $property);
-        $accessible = $reflection->isPublic();
-        $reflection->setAccessible(true);
-        $value = $reflection->getValue($object);
-        $reflection->setAccessible($accessible === false);
-
-        return $value;
+        return substr($entityClassName, strrpos($entityClassName, '\\') + 1);
     }
 
     /**
@@ -286,18 +166,57 @@ PHP;
     }
 
     /**
+     * @param ClassMetadata $classMetaData
+     * @param string $entityClassName
+     * @return array
+     * @throws PrivateMethodShouldNotAccessPropertiesException
+     */
+    protected function getPhpForProxyMethods(ClassMetadata $classMetaData, $entityClassName)
+    {
+        $return = array();
+        $reflectionClass = new \ReflectionClass($entityClassName);
+        $properties = array_merge($classMetaData->getFieldNames(), array_keys($classMetaData->associationMappings));
+        foreach ($reflectionClass->getMethods() as $method) {
+            if ($method->getName() === '__construct') {
+                continue;
+            }
+
+            $usedProperties = $this->getUsedProperties($method, $properties);
+            if (count($usedProperties) > 0) {
+                if ($method->isPrivate()) {
+                    throw new PrivateMethodShouldNotAccessPropertiesException(
+                        $entityClassName,
+                        $method->getName(),
+                        $usedProperties
+                    );
+                }
+
+                $return[] = $this->getPhpForMethod($method, $usedProperties);
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * @param \ReflectionMethod $reflectionMethod
      * @param array $properties
      * @return string
      */
-    protected function createProxyMethod(\ReflectionMethod $reflectionMethod, array $properties)
+    protected function getPhpForMethod(\ReflectionMethod $reflectionMethod, array $properties)
     {
         if ($reflectionMethod->isPublic()) {
             $signature = 'public';
         } else {
             $signature = 'protected';
         }
-        $signature .= ' function ' . $reflectionMethod->getName() . '()';
+        $signature .= ' function ' . $reflectionMethod->getName() . '(';
+        $parameters = array();
+        foreach ($reflectionMethod->getParameters() as $parameter) {
+            $parameters[] = $this->getPhpForParameter($parameter);
+        }
+        $signature .= implode(', ', $parameters) . ')';
+
         $method = $reflectionMethod->getName();
 
         array_walk($properties, function(&$name) {
@@ -308,11 +227,45 @@ PHP;
         $php = <<<PHP
     $signature
     {
-        \$this->assertReadOnlyPropertiesAreLoaded($propertiesToAssert);
+        \$this->assertReadOnlyPropertiesAreLoaded(array($propertiesToAssert));
 
         return call_user_func_array(array('parent', '$method'), func_get_args());
     }
 PHP;
+
+        return $php;
+    }
+
+    /**
+     * @param \ReflectionParameter $parameter
+     * @return string
+     */
+    protected function getPhpForParameter(\ReflectionParameter $parameter)
+    {
+        $php = null;
+        if ($parameter->getClass() instanceof \ReflectionClass) {
+            $php .= '\\' . $parameter->getClass()->getName() . ' ';
+        } elseif ($parameter->isCallable()) {
+            $php .= 'callable ';
+        }
+
+        if ($parameter->isPassedByReference()) {
+            $php .= '&';
+        }
+        $php .= '$' . $parameter->getName();
+
+        if ($parameter->isDefaultValueAvailable()) {
+            if ($parameter->isDefaultValueConstant()) {
+                $defaultValue = $parameter->getDefaultValueConstantName();
+            } elseif ($parameter->getDefaultValue() === null) {
+                $defaultValue = 'null';
+            } elseif (is_string($parameter->getDefaultValue())) {
+                $defaultValue = '\'' . $parameter->getDefaultValue() . '\'';
+            } else {
+                $defaultValue = $parameter->getDefaultValue();
+            }
+            $php .= ' = ' . $defaultValue;
+        }
 
         return $php;
     }
