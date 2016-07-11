@@ -10,6 +10,16 @@ class SimpleObjectHydrator extends ArrayHydrator
 {
     const HYDRATOR_NAME = 'simpleObject';
 
+    /** @var string */
+    protected $rootClassName;
+
+    protected function prepare()
+    {
+        parent::prepare();
+
+        $this->rootClassName = null;
+    }
+
     /**
      * @param array $data
      * @param array $result
@@ -19,8 +29,22 @@ class SimpleObjectHydrator extends ArrayHydrator
         $arrayData = array();
         parent::hydrateRowData($data, $arrayData);
 
-        $rootAlias = key($this->getPrivatePropertyValue(ArrayHydrator::class, '_rootAliases', $this));
-        $result[] = $this->doHydrateRowData($this->_rsm->aliasMap[$rootAlias], $arrayData[0]);
+        $result[] = $this->doHydrateRowData($this->getRootClassName(), $arrayData[0]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRootclassName()
+    {
+        // i don't understand when we can have more than one item in ArrayHydrator::$_rootAliases
+        // so, i assume first one is the right one
+        if ($this->rootClassName === null) {
+            $rootAlias = key($this->getPrivatePropertyValue(ArrayHydrator::class, '_rootAliases', $this));
+            $this->rootClassName = $this->_rsm->aliasMap[$rootAlias];
+        }
+
+        return $this->rootClassName;
     }
 
     /**
@@ -64,10 +88,13 @@ class SimpleObjectHydrator extends ArrayHydrator
                 continue;
             }
             $property = $reflection->getProperty($name);
-            $isAccessible = $property->isPublic() === false;
-            $property->setAccessible(true);
-            $property->setValue($entity, $value);
-            $property->setAccessible($isAccessible);
+            if ($property->isPublic()) {
+                $entity->$name = $value;
+            } else {
+                $property->setAccessible(true);
+                $property->setValue($entity, $value);
+                $property->setAccessible(false);
+            }
         }
 
         return $entity;

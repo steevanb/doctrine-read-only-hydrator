@@ -12,6 +12,15 @@ class ReadOnlyHydrator extends SimpleObjectHydrator
 {
     const HYDRATOR_NAME = 'readOnly';
 
+    /** @var string[] */
+    protected $proxyFilePathsCache = [];
+
+    /** @var string[] */
+    protected $proxyNamespacesCache = [];
+
+    /** @var string[] */
+    protected $proxyClassNamesCache = [];
+
     /**
      * @param ClassMetadata $classMetaData
      * @param array $data
@@ -82,11 +91,14 @@ PHP;
      * @param string $entityClassName
      * @return string
      */
-    protected function getProxyFilePath($entityClassName)
+    public function getProxyFilePath($entityClassName)
     {
-        $fileName = str_replace('\\', '_', $entityClassName) . '.php';
+        if (isset($this->proxyFilePathsCache[$entityClassName]) === false) {
+            $fileName = str_replace('\\', '_', $entityClassName) . '.php';
+            $this->proxyFilePathsCache[$entityClassName] = $this->getProxyDirectory() . DIRECTORY_SEPARATOR . $fileName;
+        }
 
-        return $this->getProxyDirectory() . DIRECTORY_SEPARATOR . $fileName;
+        return $this->proxyFilePathsCache[$entityClassName];
     }
 
     /**
@@ -95,7 +107,12 @@ PHP;
      */
     protected function getProxyNamespace($entityClassName)
     {
-        return 'ReadOnlyProxies\\' . substr($entityClassName, 0, strrpos($entityClassName, '\\'));
+        if (isset($this->proxyNamespacesCache[$entityClassName]) == false) {
+            $this->proxyNamespacesCache[$entityClassName] =
+                'ReadOnlyProxies\\' . substr($entityClassName, 0, strrpos($entityClassName, '\\'));
+        }
+
+        return $this->proxyNamespacesCache[$entityClassName];
     }
 
     /**
@@ -104,7 +121,12 @@ PHP;
      */
     protected function getProxyClassName($entityClassName)
     {
-        return substr($entityClassName, strrpos($entityClassName, '\\') + 1);
+        if (isset($this->proxyClassNamesCache[$entityClassName]) === false) {
+            $this->proxyClassNamesCache[$entityClassName] =
+                substr($entityClassName, strrpos($entityClassName, '\\') + 1);
+        }
+
+        return $this->proxyClassNamesCache[$entityClassName];
     }
 
     /**
