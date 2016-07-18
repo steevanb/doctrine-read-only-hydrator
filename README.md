@@ -27,6 +27,35 @@ who return everything you need.
 
 [Changelog](changelog.md)
 
+Benchmark
+---------
+
+This table show simple benchmark results (time and memory_get_peak_usage()), with 30, 1000 and 5000 entities retrieved
+from a MySQL 5.7 database, PHP 5.6.23 and Doctrine 2.5.4.
+
+ArrayHydrator is used when you call $query->getArrayResult(), ObjectHydrator when you call $query->getResult().
+
+SimpleObjectHydrator and ReadOnlyHydrator are provided with this lib, you can use them with
+$query->getResult(SimpleObjectHydrator::HYDRATOR_NAME)
+or $query->getResult(ReadOnlyHydrator::HYDRATOR_NAME)
+
+| Entities | SQL request | ArrayHydrator    | SimpleObjectHydrator | ReadOnlyHydrator | ObjectHydrator   |
+| -------- | ----------- | -------------------- | ---------------- | ---------------- | ---------------- |
+| 30       | 0.26ms      | 1.05 ms, 28 mo   | 1.45 ms, 28 mo       | 1.78 ms, 28 mo   | 7.94 ms, 29 mo   |
+| 1000     | 1.58 ms     | 29.75 ms, 32 mo  | 37.01 ms, 29 mo      | 43.26 ms, 32 mo  | 113.45 ms, 41 mo |
+| 5000     | 6.36 ms     | 164.76 ms, 48 mo | 187.30 ms, 32 mo     | 228.89 ms, 46 mo | 671.82 ms, 90 mo |
+
+![benchmark](benchmark.png)
+
+You can see how slow is Hydration process ! For 5 000 entities, Doctrine ObjectHydrator is 100x slower than the SQL request...
+
+As expected, getArrayResult() is the fastest way to retrieve data.
+But, you have to work with array, so you can't use entity methods.
+
+ReadOnlyHydrator is 4x faster than Doctrine ObjectHydrator, and only 40% slower than ArrayHydrator (who is hard to use).
+
+Is you want to be as fast as possible, but with an entity result instead of an array, SimpleObjectHydrator looks pretty good.
+
 SimpleObjectHydrator
 --------------------
 
@@ -51,33 +80,6 @@ You can't persist or flush this entity.
 
 Usefull when you want to be faster than Doctrine ObjectHydrator, you don't want to insert / update this entity, and
 be "sure" any access to a non-loaded property will throw an exception.
-
-Benchmark
----------
-
-This table show simple benchmark results (time and memory_get_peak_usage()), with 30, 1000 and 5000 entities retrieved
-from a MySQL 5.7 database, PHP 5.6.23 and Doctrine 2.5.4.
-
-ArrayHydrator is used when you call $query->getArrayResult(), ObjectHydrator when you call $query->getResult().
-
-SimpleObjectHydrator and ReadOnlyHydrator are provided with this lib, you can use them with
-$query->getResult(SimpleObjectHydrator::HYDRATOR_NAME)
-or $query->getResult(ReadOnlyHydrator::HYDRATOR_NAME)
-
-| Entities | SQL request | ArrayHydrator    | SimpleObjectHydrator | ReadOnlyHydrator | ObjectHydrator   |
-| -------- | ----------- | -------------------- | ---------------- | ---------------- | ---------------- |
-| 30       | 0.26ms      | 1.05 ms, 28 mo   | 1.45 ms, 28 mo       | 1.78 ms, 28 mo   | 7.94 ms, 29 mo   |
-| 1000     | 1.58 ms     | 29.75 ms, 32 mo  | 37.01 ms, 29 mo      | 43.26 ms, 32 mo  | 113.45 ms, 41 mo |
-| 5000     | 6.36 ms     | 164.76 ms, 48 mo | 187.30 ms, 32 mo     | 228.89 ms, 46 mo | 671.82 ms, 90 mo |
-
-You can see how slow is Hydration process ! For 5 000 entities, Doctrine ObjectHydrator is 100x slower than the SQL request...
-
-As expected, getArrayResult() is the fastest way to retrieve data.
-But, you have to work with array, so you can't use entity methods.
-
-ReadOnlyHydrator is 4x faster than Doctrine ObjectHydrator, and only 40% slower than ArrayHydrator (who is hard to use).
-
-Is you want to be as fast as possible, but with an entity result instead of an array, SimpleObjectHydrator looks pretty good.
 
 Example
 -------
