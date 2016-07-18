@@ -1,5 +1,6 @@
 [![version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/1.0.0)
-[![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
+[![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4-blue.svg)](http://www.doctrine-project.org)
+[![php](https://img.shields.io/badge/php->= 5.4-blue.svg)](http://www.doctrine-project.org)
 ![Lines](https://img.shields.io/badge/code lines-330-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-read-only-hydrator/downloads)
 [![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/bd1b7a42-6a2c-4918-9986-3361dd40cc86/analyses/2)
