@@ -59,26 +59,20 @@ Is you want to be as fast as possible, but with an entity result instead of an a
 SimpleObjectHydrator
 --------------------
 
-Hydrate your entity, with all selected fields in your QueryBuilder. If you try to access a non-loaded property,
+* Hydrate your entity, with all selected fields in your QueryBuilder. If you try to access a non-loaded property,
 no exception will be throwned, you can do what you want with this entity.
-
-No lazy loading will be executed.
-
-You can't persist or flush this entity.
-
-Usefull when you want to be faster than Doctrine ObjectHydrator (and a little little bit more than ReadOnlyHydrator),
+* No lazy loading will be executed.
+* You can't persist or flush this entity.
+* Usefull when you want to be faster than Doctrine ObjectHydrator (and a little little bit more than ReadOnlyHydrator),
 you don't want to insert / update this entity, but doesn't ensure you can't access non-loaded property.
 
 ReadOnlyHydrator
 ----------------
 
-Hydrate a proxy of your entity, who throw an exception if you try to access a property who is not loaded by your QueryBuilder.
-
-No lazy loading will be executed.
-
-You can't persist or flush this entity.
-
-Usefull when you want to be faster than Doctrine ObjectHydrator, you don't want to insert / update this entity, and
+* Hydrate a proxy of your entity, who throw an exception if you try to access a property who is not loaded by your QueryBuilder.
+* No lazy loading will be executed.
+* You can't persist or flush this entity.
+* Usefull when you want to be faster than Doctrine ObjectHydrator, you don't want to insert / update this entity, and
 be "sure" any access to a non-loaded property will throw an exception.
 
 Example
