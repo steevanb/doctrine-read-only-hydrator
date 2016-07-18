@@ -40,7 +40,7 @@ class SimpleObjectHydrator extends ArrayHydrator
         // i don't understand when we can have more than one item in ArrayHydrator::$_rootAliases
         // so, i assume first one is the right one
         if ($this->rootClassName === null) {
-            $rootAlias = key($this->getPrivatePropertyValue(ArrayHydrator::class, '_rootAliases', $this));
+            $rootAlias = key($this->getPrivatePropertyValue($this, '_rootAliases'));
             $this->rootClassName = $this->_rsm->aliasMap[$rootAlias];
         }
 
@@ -194,14 +194,28 @@ class SimpleObjectHydrator extends ArrayHydrator
     }
 
     /**
-     * @param string $className
-     * @param string $property
      * @param object $object
+     * @param string $property
      * @return mixed
      */
-    protected function getPrivatePropertyValue($className, $property, $object)
+    protected function getPrivatePropertyValue($object, $property)
     {
-        $reflection = new \ReflectionProperty($className, $property);
+        $classNames = array_merge([get_class($object)], array_values(class_parents(get_class($object))));
+        $classNameIndex = 0;
+        do {
+            try {
+                $reflection = new \ReflectionProperty($classNames[$classNameIndex], $property);
+                $continue = false;
+            } catch (\ReflectionException $e) {
+                $classNameIndex++;
+                $continue = true;
+            }
+        } while ($continue);
+
+        if (isset($reflection) === false || $reflection instanceof \ReflectionProperty === false) {
+            throw new \Exception(get_class($object) . '::$' . $property . ' does not exists.');
+        }
+
         $accessible = $reflection->isPublic();
         $reflection->setAccessible(true);
         $value = $reflection->getValue($object);
