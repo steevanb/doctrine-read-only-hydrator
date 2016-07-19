@@ -82,13 +82,16 @@ class SimpleObjectHydrator extends ArrayHydrator
                 }
             }
 
-            if (
-                $classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE
-                && isset($entity->$name) === false
-            ) {
-                continue;
+            if ($classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE) {
+               try {
+                   $property = $reflection->getProperty($name);
+               } catch (\ReflectionException $e) {
+                   continue;
+               }
+            } else {
+                $property = $reflection->getProperty($name);
             }
-            $property = $reflection->getProperty($name);
+
             if ($property->isPublic()) {
                 $entity->$name = $value;
             } else {
