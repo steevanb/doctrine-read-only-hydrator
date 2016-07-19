@@ -267,6 +267,8 @@ PHP;
             $php .= '\\' . $parameter->getClass()->name . ' ';
         } elseif ($parameter->isCallable()) {
             $php .= 'callable ';
+        } elseif ($parameter->isArray()) {
+            $php .= 'array ';
         }
 
         if ($parameter->isPassedByReference()) {
@@ -275,14 +277,19 @@ PHP;
         $php .= '$' . $parameter->name;
 
         if ($parameter->isDefaultValueAvailable()) {
+            $parameterDefaultValue = $parameter->getDefaultValue();
             if ($parameter->isDefaultValueConstant()) {
                 $defaultValue = $parameter->getDefaultValueConstantName();
-            } elseif ($parameter->getDefaultValue() === null) {
+            } elseif ($parameterDefaultValue === null) {
                 $defaultValue = 'null';
-            } elseif (is_string($parameter->getDefaultValue())) {
-                $defaultValue = '\'' . $parameter->getDefaultValue() . '\'';
+            } elseif (is_bool($parameterDefaultValue)) {
+                $defaultValue = ($parameterDefaultValue === true) ? 'true' : 'false';
+            } elseif (is_string($parameterDefaultValue)) {
+                $defaultValue = '\'' . $parameterDefaultValue . '\'';
+            } elseif (is_array($parameterDefaultValue)) {
+                $defaultValue = 'array()';
             } else {
-                $defaultValue = $parameter->getDefaultValue();
+                $defaultValue = $parameterDefaultValue;
             }
             $php .= ' = ' . $defaultValue;
         }
