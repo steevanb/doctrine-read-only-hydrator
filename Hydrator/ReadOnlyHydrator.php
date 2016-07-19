@@ -109,7 +109,7 @@ PHP;
      */
     protected function getProxyNamespace($entityClassName)
     {
-        if (isset($this->proxyNamespacesCache[$entityClassName]) == false) {
+        if (isset($this->proxyNamespacesCache[$entityClassName]) === false) {
             $this->proxyNamespacesCache[$entityClassName] =
                 'ReadOnlyProxies\\' . substr($entityClassName, 0, strrpos($entityClassName, '\\'));
         }
@@ -197,7 +197,7 @@ PHP;
         $reflectionClass = new \ReflectionClass($entityClassName);
         $properties = array_merge($classMetaData->getFieldNames(), array_keys($classMetaData->associationMappings));
         foreach ($reflectionClass->getMethods() as $method) {
-            if ($method->getName() === '__construct') {
+            if ($method->name === '__construct') {
                 continue;
             }
 
@@ -206,7 +206,7 @@ PHP;
                 if ($method->isPrivate()) {
                     throw new PrivateMethodShouldNotAccessPropertiesException(
                         $entityClassName,
-                        $method->getName(),
+                        $method->name,
                         $usedProperties
                     );
                 }
@@ -230,14 +230,14 @@ PHP;
         } else {
             $signature = 'protected';
         }
-        $signature .= ' function ' . $reflectionMethod->getName() . '(';
+        $signature .= ' function ' . $reflectionMethod->name . '(';
         $parameters = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $parameters[] = $this->getPhpForParameter($parameter);
         }
         $signature .= implode(', ', $parameters) . ')';
 
-        $method = $reflectionMethod->getName();
+        $method = $reflectionMethod->name;
 
         array_walk($properties, function(&$name) {
             $name = "'" . $name . "'";
@@ -264,7 +264,7 @@ PHP;
     {
         $php = null;
         if ($parameter->getClass() instanceof \ReflectionClass) {
-            $php .= '\\' . $parameter->getClass()->getName() . ' ';
+            $php .= '\\' . $parameter->getClass()->name . ' ';
         } elseif ($parameter->isCallable()) {
             $php .= 'callable ';
         }
@@ -272,7 +272,7 @@ PHP;
         if ($parameter->isPassedByReference()) {
             $php .= '&';
         }
-        $php .= '$' . $parameter->getName();
+        $php .= '$' . $parameter->name;
 
         if ($parameter->isDefaultValueAvailable()) {
             if ($parameter->isDefaultValueConstant()) {
