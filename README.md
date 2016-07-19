@@ -40,7 +40,7 @@ $repository->findAll() or $repository->findBy().
 SimpleObjectHydrator and ReadOnlyHydrator are provided with this lib, see example above.
 
 | Entities | SQL request | ArrayHydrator    | SimpleObjectHydrator | ReadOnlyHydrator | ObjectHydrator   |
-| -------- | ----------- | -------------------- | ---------------- | ---------------- | ---------------- |
+| -------- | ----------- | ---------------- | -------------------- | ---------------- | ---------------- |
 | 30       | 0.26ms      | 1.05 ms, 28 mo   | 1.45 ms, 28 mo       | 1.78 ms, 28 mo   | 7.94 ms, 29 mo   |
 | 1000     | 1.58 ms     | 29.75 ms, 32 mo  | 37.01 ms, 29 mo      | 43.26 ms, 32 mo  | 113.45 ms, 41 mo |
 | 5000     | 6.36 ms     | 164.76 ms, 48 mo | 187.30 ms, 32 mo     | 228.89 ms, 46 mo | 671.82 ms, 90 mo |
@@ -106,8 +106,8 @@ Installation
 composer require steevanb/doctrine-read-only-hydrator 1.0.*
 ```
 
-Symfony 2.x integration
------------------------
+Symfony 2.x or 3.x integration
+------------------------------
 
 ```php
 # app/AppKernel.php
@@ -117,24 +117,7 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         $bundles = [
-            new steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony2\ReadOnlyHydratorBundle()
-        ];
-    }
-}
-```
-
-Symfony 3.x integration
------------------------
-
-```php
-# app/AppKernel.php
-
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = [
-            new steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3\ReadOnlyHydratorBundle()
+            new steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle\ReadOnlyHydratorBundle()
         ];
     }
 }
@@ -151,4 +134,30 @@ use steevanb\DoctrineReadOnlyHydrator\Hydrator\ReadOnlyHydrator;
 
 $configuration->addCustomHydrationMode(SimpleObjectHydrator::HYDRATOR_NAME, SimpleObjectHydrator::class);
 $configuration->addCustomHydrationMode(ReadOnlyHydrator::HYDRATOR_NAME, ReadOnlyHydrator::class);
+```
+
+Integration with steevanb/doctrine-stats
+----------------------------------------
+
+(steevanb/doctrine-stats)[https://github.com/steevanb/doctrine-stats] add lots of statistics about Doctrine :
+number of mapped entities, number of lazy loaded entities, collapse and count same sql queries, show hydration time etc.
+
+If you use this lib, you have to add SimpleObjectHydrator and ReadOnlyHydrator hydration times :
+```json
+# composer.json
+
+{
+    "extra": {
+        "composer-overload-class-dev": {
+            "steevanb\\DoctrineReadOnlyHydrator\\Hydrator\\SimpleObjectHydrator": {
+                "original-file": "vendor/steevanb/doctrine-read-only-hydrator/Hydrator/SimpleObjectHydrator.php",
+                "overload-file": "vendor/steevanb/doctrine-read-only-hydrator/ComposerOverloadClass/Hydrator/SimpleObjectHydrator.php"
+            },
+            "steevanb\\DoctrineReadOnlyHydrator\\Hydrator\\ReadOnlyHydrator": {
+                "original-file": "vendor/steevanb/doctrine-read-only-hydrator/Hydrator/ReadOnlyHydrator.php",
+                "overload-file": "vendor/steevanb/doctrine-read-only-hydrator/ComposerOverloadClass/Hydrator/ReadOnlyHydrator.php"
+            }
+        }
+    }
+}
 ```
