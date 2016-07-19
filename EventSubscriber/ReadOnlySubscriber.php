@@ -2,6 +2,7 @@
 
 namespace steevanb\DoctrineReadOnlyHydrator\EventSubscriber;
 
+use steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
@@ -17,7 +18,7 @@ class ReadOnlySubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(Events::prePersist, Events::preFlush);
+        return [Events::prePersist, Events::preFlush];
     }
 
     /**
@@ -56,6 +57,8 @@ class ReadOnlySubscriber implements EventSubscriber
      */
     protected function isReadOnlyEntity($entity)
     {
-        return $entity instanceof ReadOnlyEntityInterface;
+        return
+            $entity instanceof ReadOnlyEntityInterface
+            || isset($entity->{SimpleObjectHydrator::READ_ONLY_PROPERTY});
     }
 }

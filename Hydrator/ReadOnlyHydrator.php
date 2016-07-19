@@ -167,7 +167,7 @@ PHP;
         );
         $code = '<?php' . "\n" . implode("\n", $methodLines) . "\n" . '?>';
 
-        $return = array();
+        $return = [];
         $nextStringIsProperty = false;
         foreach (token_get_all($code) as $token) {
             if (is_array($token)) {
@@ -193,7 +193,7 @@ PHP;
      */
     protected function getPhpForProxyMethods(ClassMetadata $classMetaData, $entityClassName)
     {
-        $return = array();
+        $return = [];
         $reflectionClass = new \ReflectionClass($entityClassName);
         $properties = array_merge($classMetaData->getFieldNames(), array_keys($classMetaData->associationMappings));
         foreach ($reflectionClass->getMethods() as $method) {
@@ -231,7 +231,7 @@ PHP;
             $signature = 'protected';
         }
         $signature .= ' function ' . $reflectionMethod->getName() . '(';
-        $parameters = array();
+        $parameters = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $parameters[] = $this->getPhpForParameter($parameter);
         }

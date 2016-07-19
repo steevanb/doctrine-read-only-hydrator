@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 class SimpleObjectHydrator extends ArrayHydrator
 {
     const HYDRATOR_NAME = 'simpleObject';
+    const READ_ONLY_PROPERTY = '__SIMPLE_OBJECT_HYDRATOR__READ_ONLY__';
 
     /** @var string */
     protected $rootClassName;
@@ -26,7 +27,7 @@ class SimpleObjectHydrator extends ArrayHydrator
      */
     protected function hydrateRowData(array $data, array &$result)
     {
-        $arrayData = array();
+        $arrayData = [];
         parent::hydrateRowData($data, $arrayData);
 
         $result[] = $this->doHydrateRowData($this->getRootClassName(), $arrayData[0]);
@@ -111,6 +112,7 @@ class SimpleObjectHydrator extends ArrayHydrator
         $className = $this->getEntityClassName($classMetaData, $data);
         $reflection = new \ReflectionClass($className);
         $entity = $reflection->newInstanceWithoutConstructor();
+        $entity->{static::READ_ONLY_PROPERTY} = true;
 
         return $entity;
     }
@@ -197,6 +199,7 @@ class SimpleObjectHydrator extends ArrayHydrator
      * @param object $object
      * @param string $property
      * @return mixed
+     * @throws \Exception
      */
     protected function getPrivatePropertyValue($object, $property)
     {
