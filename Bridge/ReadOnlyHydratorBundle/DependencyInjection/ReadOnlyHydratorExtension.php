@@ -1,6 +1,6 @@
 <?php
 
-namespace steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3\DependencyInjection;
+namespace steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;

@@ -1,9 +1,9 @@
 <?php
 
-namespace steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3;
+namespace steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle;
 
-use steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3\DependencyInjection\Compiler\AddReadOnlyHydrationModePass;
-use steevanb\DoctrineReadOnlyHydrator\Bridge\Symfony3\DependencyInjection\Compiler\AddSimpleObjectHydrationModePass;
+use steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle\DependencyInjection\Compiler\AddReadOnlyHydrationModePass;
+use steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle\DependencyInjection\Compiler\AddSimpleObjectHydrationModePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

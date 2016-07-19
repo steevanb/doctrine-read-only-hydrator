@@ -23,7 +23,7 @@ database, you can use SimpleObjectHydrator or ReadOnlyHydrator.
 
 This hydrated entities can't be persisted / flushed, because they are not registered in UnitOfwork to be faster.
 
-Nothing will be lazy loaded : to be faster, and because most of the time, you have to create a complete queryBuilder,
+Nothing will be lazy loaded : to be faster, and because most of the time, you have to create a complete QueryBuilder,
 who return everything you need.
 
 [Changelog](changelog.md)
@@ -34,11 +34,10 @@ Benchmark
 This table show simple benchmark results (time and memory_get_peak_usage()), with 30, 1000 and 5000 entities retrieved
 from a MySQL 5.7 database, PHP 5.6.23 and Doctrine 2.5.4.
 
-ArrayHydrator is used when you call $query->getArrayResult(), ObjectHydrator when you call $query->getResult().
+ArrayHydrator is used when you call $query->getArrayResult(), ObjectHydrator when you call $query->getResult(),
+$repository->findAll() or $repository->findBy().
 
-SimpleObjectHydrator and ReadOnlyHydrator are provided with this lib, you can use them with
-$query->getResult(SimpleObjectHydrator::HYDRATOR_NAME)
-or $query->getResult(ReadOnlyHydrator::HYDRATOR_NAME)
+SimpleObjectHydrator and ReadOnlyHydrator are provided with this lib, see example above.
 
 | Entities | SQL request | ArrayHydrator    | SimpleObjectHydrator | ReadOnlyHydrator | ObjectHydrator   |
 | -------- | ----------- | -------------------- | ---------------- | ---------------- | ---------------- |
@@ -81,6 +80,7 @@ Example
 
 ```php
 # Foo\Repository\BarRepository
+
 use steevanb\DoctrineReadOnlyHydrator\Hydrator\ReadOnlyHydrator;
 
 class BarRepository
@@ -111,6 +111,7 @@ Symfony 2.x integration
 
 ```php
 # app/AppKernel.php
+
 class AppKernel extends Kernel
 {
     public function registerBundles()
@@ -127,6 +128,7 @@ Symfony 3.x integration
 
 ```php
 # app/AppKernel.php
+
 class AppKernel extends Kernel
 {
     public function registerBundles()
