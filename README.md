@@ -139,7 +139,7 @@ $configuration->addCustomHydrationMode(ReadOnlyHydrator::HYDRATOR_NAME, ReadOnly
 Integration with steevanb/doctrine-stats
 ----------------------------------------
 
-(steevanb/doctrine-stats)[https://github.com/steevanb/doctrine-stats] add lots of statistics about Doctrine :
+[steevanb/doctrine-stats](https://github.com/steevanb/doctrine-stats) add lots of statistics about Doctrine :
 number of mapped entities, number of lazy loaded entities, collapse and count same sql queries, show hydration time etc.
 
 If you use this lib, you have to add SimpleObjectHydrator and ReadOnlyHydrator hydration times :
