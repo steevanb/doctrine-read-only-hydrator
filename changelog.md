@@ -1,7 +1,8 @@
 2.0.0 (2016-07-19)
 ------------------
 
-- Add steevanb\DoctrineReadOnlyHydrator\Hydrator\ReadOnlyHydrator, who use proxy to throw exception when you try to access a non-loaded property
+- Add steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator (old ReadOnlyHydrator)
+- Change ReadOnlyHydrator : now use proxy to throw exception when you try to access a non-loaded property
 - Add bridge to [steevanb/doctrine-stats](https://github.com/steevanb/doctrine-stats)
 - Performance optimizations with BlackFire
 - Merge Symfony2 and Symfony2 bundle into steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle
