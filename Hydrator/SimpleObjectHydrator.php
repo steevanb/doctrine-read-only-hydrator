@@ -22,15 +22,19 @@ class SimpleObjectHydrator extends ArrayHydrator
     }
 
     /**
-     * @param array $data
-     * @param array $result
+     * @return array
      */
-    protected function hydrateRowData(array $data, array &$result)
+    protected function hydrateAllData()
     {
-        $arrayData = [];
-        parent::hydrateRowData($data, $arrayData);
+        $arrayResult = parent::hydrateAllData();
+        $readOnlyResult = [];
+        if (is_array($arrayResult)) {
+            foreach ($arrayResult as $data) {
+                $readOnlyResult[] = $this->doHydrateRowData($this->getRootclassName(), $data);
+            }
+        }
 
-        $result[] = $this->doHydrateRowData($this->getRootClassName(), $arrayData[0]);
+        return $readOnlyResult;
     }
 
     /**

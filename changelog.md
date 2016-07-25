@@ -1,3 +1,8 @@
+2.0.3 (2016-07-25)
+------------------
+
+- Overload hydrateAllData() instead of hydrateRowData() in SimpleObjectHydrator, to fix hydration bug
+
 2.0.2 (2016-07-19)
 ------------------
 
