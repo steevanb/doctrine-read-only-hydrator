@@ -66,23 +66,22 @@ class SimpleObjectHydrator extends ArrayHydrator
         $reflection = new \ReflectionObject($entity);
 
         foreach ($data as $name => $value) {
-            if (array_key_exists($name, $mappings)) {
-                $mapping = $mappings[$name];
-                switch ($mapping['type']) {
+            if (isset($mappings[$name]) && is_array($value)) {
+                switch ($mappings[$name]['type']) {
                     case ClassMetadata::ONE_TO_ONE:
-                        $value = $this->hydrateOneToOne($mapping, $value);
+                        $value = $this->hydrateOneToOne($mappings[$name], $value);
                         break;
                     case ClassMetadata::ONE_TO_MANY:
-                        $value = $this->hydrateOneToMany($mapping, $value);
+                        $value = $this->hydrateOneToMany($mappings[$name], $value);
                         break;
                     case ClassMetadata::MANY_TO_ONE:
-                        $value = $this->hydrateManyToOne($mapping, $value);
+                        $value = $this->hydrateManyToOne($mappings[$name], $value);
                         break;
                     case ClassMetadata::MANY_TO_MANY:
-                        $value = $this->hydrateManyToMany($mapping, $value);
+                        $value = $this->hydrateManyToMany($mappings[$name], $value);
                         break;
                     default:
-                        throw new \Exception('Unknow mapping type "' . $mapping['type'] . '".');
+                        throw new \Exception('Unknow mapping type "' . $mappings[$name]['type'] . '".');
                 }
             }
 
@@ -137,7 +136,7 @@ class SimpleObjectHydrator extends ArrayHydrator
                 $return = $classMetaData->name;
                 break;
             case ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE:
-                if (array_key_exists($classMetaData->discriminatorColumn['name'], $data) === false) {
+                if (isset($data[$classMetaData->discriminatorColumn['name']]) === false) {
                     $exception = 'Discriminator column "' . $classMetaData->discriminatorColumn['name'] . '" ';
                     $exception .= 'for "' . $classMetaData->name . '" does not exists in $data.';
                     throw new \Exception($exception);

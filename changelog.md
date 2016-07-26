@@ -1,3 +1,9 @@
+2.0.4 (2016-07-26)
+------------------
+
+- Fix relation hydration when value is null, instead of array
+- Replace some array_key_exists() by isset(), for performance
+
 2.0.3 (2016-07-25)
 ------------------
 
