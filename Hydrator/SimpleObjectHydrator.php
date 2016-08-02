@@ -4,6 +4,7 @@ namespace steevanb\DoctrineReadOnlyHydrator\Hydrator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Internal\Hydration\ArrayHydrator;
+use Doctrine\ORM\Internal\HydrationCompleteHandler;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 class SimpleObjectHydrator extends ArrayHydrator
@@ -19,6 +20,13 @@ class SimpleObjectHydrator extends ArrayHydrator
         parent::prepare();
 
         $this->rootClassName = null;
+    }
+
+    protected function cleanup()
+    {
+        parent::cleanup();
+
+        $this->_uow->hydrationComplete();
     }
 
     /**
@@ -120,7 +128,23 @@ class SimpleObjectHydrator extends ArrayHydrator
         $entity = $reflection->newInstanceWithoutConstructor();
         $entity->{static::READ_ONLY_PROPERTY} = true;
 
+        $this->deferPostLoadInvoking($classMetaData, $entity);
+
         return $entity;
+    }
+
+    /**
+     * @param ClassMetadata $classMetaData
+     * @param object $entity
+     * @return $this
+     */
+    protected function deferPostLoadInvoking(ClassMetadata $classMetaData, $entity)
+    {
+        /** @var HydrationCompleteHandler $handler */
+        $handler = $this->getPrivatePropertyValue($this->_uow, 'hydrationCompleteHandler');
+        $handler->deferPostLoadInvoking($classMetaData, $entity);
+
+        return $this;
     }
 
     /**
@@ -169,8 +193,8 @@ class SimpleObjectHydrator extends ArrayHydrator
     protected function hydrateOneToMany(array $mapping, $data)
     {
         $entities = [];
-        foreach ($data as $linkedData) {
-            $entities[] = $this->doHydrateRowData($mapping['targetEntity'], $linkedData);
+        foreach ($data as $key => $linkedData) {
+            $entities[$key] = $this->doHydrateRowData($mapping['targetEntity'], $linkedData);
         }
 
         return new ArrayCollection($entities);
@@ -194,8 +218,8 @@ class SimpleObjectHydrator extends ArrayHydrator
     protected function hydrateManyToMany(array $mapping, $data)
     {
         $entities = [];
-        foreach ($data as $linkedData) {
-            $entities[] = $this->doHydrateRowData($mapping['targetEntity'], $linkedData);
+        foreach ($data as $key => $linkedData) {
+            $entities[$key] = $this->doHydrateRowData($mapping['targetEntity'], $linkedData);
         }
 
         return new ArrayCollection($entities);

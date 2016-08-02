@@ -35,6 +35,8 @@ class ReadOnlyHydrator extends SimpleObjectHydrator
         $proxyClassName = $this->getProxyNamespace($className) . '\\' . $this->getProxyClassName($className);
         $entity = new $proxyClassName(array_keys($data));
 
+        $this->deferPostLoadInvoking($classMetaData, $entity);
+
         return $entity;
     }
 
