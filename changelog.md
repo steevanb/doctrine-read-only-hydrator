@@ -1,3 +1,9 @@
+2.0.5 (2016-08-02)
+------------------
+
+- Add postLoad event call after SimpleObjectHydrator and ReadOnlyHydrator hydration
+- Fix indexBy configuration for collections (oneToMany and manyToMany)
+
 2.0.4 (2016-07-26)
 ------------------
 
