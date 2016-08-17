@@ -1,3 +1,12 @@
+2.1.0 (2016-08-17)
+------------------
+
+- Add suggest steevanb/doctrine-stats to composer.json
+- Change steevanb/doctrine-stats requirement to ^1.1.0 (only if you want to install it)
+- ComposerOverloadClass\steevanb\DoctrineReadOnlyHydrator\Hydrator\ReadOnlyHydrator and SimpleObjectHydrator now
+overload createEntity(), to call dispatchPostCreateEntityEvent()
+- Add php version ^5.4.6 || ^7.0 to composer.json
+
 2.0.5 (2016-08-02)
 ------------------
 
