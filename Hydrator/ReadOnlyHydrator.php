@@ -148,7 +148,7 @@ PHP;
         $directory = $this->getPrivatePropertyValue($proxyGenerator, 'proxyDirectory');
         $readOnlyDirectory = $directory . DIRECTORY_SEPARATOR . 'ReadOnly';
         if (is_dir($readOnlyDirectory) === false) {
-            mkdir($readOnlyDirectory);
+            mkdir($readOnlyDirectory, 0775, true);
         }
 
         return $readOnlyDirectory;
