@@ -227,11 +227,7 @@ PHP;
      */
     protected function getPhpForMethod(\ReflectionMethod $reflectionMethod, array $properties)
     {
-        if ($reflectionMethod->isPublic()) {
-            $signature = 'public';
-        } else {
-            $signature = 'protected';
-        }
+        $signature = ($reflectionMethod->isPublic()) ? 'public' : 'protected';
         $signature .= ' function ' . $reflectionMethod->name . '(';
         $parameters = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
@@ -245,6 +241,34 @@ PHP;
             $name = "'" . $name . "'";
         });
         $propertiesToAssert = implode(', ', $properties);
+
+        if (
+            version_compare(PHP_VERSION, '7.0.0', '>=')
+            && $reflectionMethod->hasReturnType()
+        ) {
+            $signature .= ': ';
+            if (version_compare(PHP_VERSION, '7.1.0', '>=') && $reflectionMethod->getReturnType()->allowsNull()) {
+                $signature .= '?';
+            }
+
+            if ($reflectionMethod->getReturnType()->isBuiltin()) {
+                $returnType = $reflectionMethod->getReturnType()->getName();
+            } else {
+                switch ($reflectionMethod->getReturnType()->getName()) {
+                    case 'self':
+                        $returnType = $this->getFullQualifiedClassName(
+                            $reflectionMethod->getDeclaringClass()->getName()
+                        );
+                        break;
+                    case 'parent':
+                        throw new \Exception('Function with return type parent can\'t be overloaded.');
+                    default:
+                        $returnType = $this->getFullQualifiedClassName($reflectionMethod->getReturnType()->getName());
+                }
+            }
+
+            $signature .= $returnType;
+        }
 
         $php = <<<PHP
     $signature
@@ -265,12 +289,24 @@ PHP;
     protected function getPhpForParameter(\ReflectionParameter $parameter)
     {
         $php = null;
+        if (
+            version_compare(PHP_VERSION, '7.1.0', '>=')
+            && $parameter->hasType()
+            && $parameter->getType()->allowsNull()
+        ) {
+            $php .= '?';
+        }
         if ($parameter->getClass() instanceof \ReflectionClass) {
-            $php .= '\\' . $parameter->getClass()->name . ' ';
+            $php .= $this->getFullQualifiedClassName($parameter->getClass()->name) . ' ';
         } elseif ($parameter->isCallable()) {
             $php .= 'callable ';
         } elseif ($parameter->isArray()) {
             $php .= 'array ';
+        } elseif (
+            version_compare(PHP_VERSION, '7.0.0', '>=')
+            && $parameter->hasType()
+        ) {
+            $php .= $parameter->getType()->getName() . ' ';
         }
 
         if ($parameter->isPassedByReference()) {
@@ -297,5 +333,15 @@ PHP;
         }
 
         return $php;
+    }
+
+    /**
+     * PHP7 Reflection sometimes return \Foo\Bar, sometimes Foo\Bar
+     * @param string $className
+     * @return string
+     */
+    protected function getFullQualifiedClassName($className)
+    {
+        return '\\' . ltrim($className, '\\');
     }
 }
