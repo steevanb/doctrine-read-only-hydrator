@@ -1,20 +1,17 @@
-master
-------
+### [2.1.3](../../compare/2.1.2...2.1.3) (2017-03-24)
 
-- Fix PHP 7.1.0 and 7.1.1 RreflectionMethod::getReturnType()::getName() who is protected, should be public as of 7.1.2
+- Fix PHP 7.1.0 and 7.1.1 ReflectionMethod::getReturnType()::getName() who is protected, should be public as of 7.1.2
+- [Desjardins Jérôme](https://github.com/jewome62) Fix INHERITANCE_TYPE_JOINED hydration
 
-2.1.2 (2017-03-01)
-------------------
+### [2.1.2](../../compare/2.1.1...2.1.2) (2017-03-01)
 
 - Fix PHP7 compatibility
 
-2.1.1 (2017-01-18)
-------------------
+### [2.1.1](../../compare/2.1.0...2.1.1) (2017-01-18)
 
 - Create cache dir recursivly
 
-2.1.0 (2016-08-17)
-------------------
+### [2.1.0](../../compare/2.0.5...2.1.0) (2016-08-17)
 
 - Add suggest steevanb/doctrine-stats to composer.json
 - Change steevanb/doctrine-stats requirement to ^1.1.0 (only if you want to install it)
@@ -22,35 +19,29 @@ master
 overload createEntity(), to call dispatchPostCreateEntityEvent()
 - Add php version ^5.4.6 || ^7.0 to composer.json
 
-2.0.5 (2016-08-02)
-------------------
+### [2.0.5](../../compare/2.0.4...2.0.5) (2016-08-02)
 
 - Add postLoad event call after SimpleObjectHydrator and ReadOnlyHydrator hydration
 - Fix indexBy configuration for collections (oneToMany and manyToMany)
 
-2.0.4 (2016-07-26)
-------------------
+### [2.0.4](../../compare/2.0.3...2.0.4) (2016-07-26)
 
 - Fix relation hydration when value is null, instead of array
 - Replace some array_key_exists() by isset(), for performance
 
-2.0.3 (2016-07-25)
-------------------
+### [2.0.3](../../compare/2.0.2...2.0.3) (2016-07-25)
 
 - Overload hydrateAllData() instead of hydrateRowData() in SimpleObjectHydrator, to fix hydration bug
 
-2.0.2 (2016-07-19)
-------------------
+### [2.0.2](../../compare/2.0.1...2.0.2) (2016-07-19)
 
 - Fix array parameter type and default value, and boolean default value for ReadOnlyHydrator::getPhpForParameter()
 
-2.0.1 (2016-07-19)
-------------------
+### [2.0.1](../../compare/2.0.0...2.0.1) (2016-07-19)
 
 - Fix INHERITANCE_TYPE_SINGLE_TABLE hydration
 
-2.0.0 (2016-07-19)
-------------------
+### [2.0.0](../../compare/1.0.0...2.0.0) (2016-07-19)
 
 - Add steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator (old ReadOnlyHydrator)
 - Change ReadOnlyHydrator : now use proxy to throw exception when you try to access a non-loaded property

@@ -93,8 +93,10 @@ class SimpleObjectHydrator extends ArrayHydrator
                 }
             }
 
-            if ($classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE
-               || $classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_JOINED) {
+            if (
+                $classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE
+               || $classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_JOINED
+            ) {
                try {
                    $property = $reflection->getProperty($name);
                } catch (\ReflectionException $e) {
