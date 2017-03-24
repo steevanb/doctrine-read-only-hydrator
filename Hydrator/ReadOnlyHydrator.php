@@ -252,9 +252,9 @@ PHP;
             }
 
             if ($reflectionMethod->getReturnType()->isBuiltin()) {
-                $returnType = $reflectionMethod->getReturnType()->getName();
+                $returnType = (string) $reflectionMethod->getReturnType();
             } else {
-                switch ($reflectionMethod->getReturnType()->getName()) {
+                switch ((string) $reflectionMethod->getReturnType()) {
                     case 'self':
                         $returnType = $this->getFullQualifiedClassName(
                             $reflectionMethod->getDeclaringClass()->getName()
@@ -263,7 +263,7 @@ PHP;
                     case 'parent':
                         throw new \Exception('Function with return type parent can\'t be overloaded.');
                     default:
-                        $returnType = $this->getFullQualifiedClassName($reflectionMethod->getReturnType()->getName());
+                        $returnType = $this->getFullQualifiedClassName((string) $reflectionMethod->getReturnType());
                 }
             }
 

@@ -1,3 +1,8 @@
+master
+------
+
+- Fix PHP 7.1.0 and 7.1.1 RreflectionMethod::getReturnType()::getName() who is protected, should be public as of 7.1.2
+
 2.1.2 (2017-03-01)
 ------------------
 
