@@ -93,7 +93,8 @@ class SimpleObjectHydrator extends ArrayHydrator
                 }
             }
 
-            if ($classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE) {
+            if ($classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE
+               || $classMetaData->inheritanceType === ClassMetadata::INHERITANCE_TYPE_JOINED) {
                try {
                    $property = $reflection->getProperty($name);
                } catch (\ReflectionException $e) {
@@ -160,6 +161,7 @@ class SimpleObjectHydrator extends ArrayHydrator
                 $return = $classMetaData->name;
                 break;
             case ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE:
+            case ClassMetadata::INHERITANCE_TYPE_JOINED:
                 if (isset($data[$classMetaData->discriminatorColumn['name']]) === false) {
                     $exception = 'Discriminator column "' . $classMetaData->discriminatorColumn['name'] . '" ';
                     $exception .= 'for "' . $classMetaData->name . '" does not exists in $data.';
