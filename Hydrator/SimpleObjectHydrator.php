@@ -160,6 +160,7 @@ class SimpleObjectHydrator extends ArrayHydrator
                 $return = $classMetaData->name;
                 break;
             case ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE:
+            case ClassMetadata::INHERITANCE_TYPE_JOINED:
                 if (isset($data[$classMetaData->discriminatorColumn['name']]) === false) {
                     $exception = 'Discriminator column "' . $classMetaData->discriminatorColumn['name'] . '" ';
                     $exception .= 'for "' . $classMetaData->name . '" does not exists in $data.';
