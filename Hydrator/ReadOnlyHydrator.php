@@ -348,9 +348,12 @@ PHP;
     /**
      * @param \ReflectionType $reflectionType
      * @return string
-     * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php#L215
+     * @see https://github.com/symfony/symfony/blob/v3.2.6/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php#L215
      */
-    protected static function extractNameFromReflexionType(\ReflectionType $reflectionType){
-        return $reflectionType instanceof \ReflectionNamedType ? $reflectionType->getName() : $reflectionType->__toString();
+    protected static function extractNameFromReflexionType(\ReflectionType $reflectionType)
+    {
+        return $reflectionType instanceof \ReflectionNamedType
+            ? $reflectionType->getName()
+            : $reflectionType->__toString();
     }
 }
