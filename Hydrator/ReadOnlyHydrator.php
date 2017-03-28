@@ -252,9 +252,9 @@ PHP;
             }
 
             if ($reflectionMethod->getReturnType()->isBuiltin()) {
-                $returnType = (string) $reflectionMethod->getReturnType();
+                $returnType = static::extractNameFromReflexionType($reflectionMethod->getReturnType());
             } else {
-                switch ((string) $reflectionMethod->getReturnType()) {
+                switch (static::extractNameFromReflexionType($reflectionMethod->getReturnType())) {
                     case 'self':
                         $returnType = $this->getFullQualifiedClassName(
                             $reflectionMethod->getDeclaringClass()->getName()
@@ -263,7 +263,7 @@ PHP;
                     case 'parent':
                         throw new \Exception('Function with return type parent can\'t be overloaded.');
                     default:
-                        $returnType = $this->getFullQualifiedClassName((string) $reflectionMethod->getReturnType());
+                        $returnType = $this->getFullQualifiedClassName(static::extractNameFromReflexionType($reflectionMethod->getReturnType()));
                 }
             }
 
@@ -306,7 +306,7 @@ PHP;
             version_compare(PHP_VERSION, '7.0.0', '>=')
             && $parameter->hasType()
         ) {
-            $php .= $parameter->getType()->getName() . ' ';
+            $php .= static::extractNameFromReflexionType($parameter->getType()) . ' ';
         }
 
         if ($parameter->isPassedByReference()) {
@@ -343,5 +343,14 @@ PHP;
     protected function getFullQualifiedClassName($className)
     {
         return '\\' . ltrim($className, '\\');
+    }
+    
+    /**
+     * @param \ReflectionType $reflectionType
+     * @return string
+     * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php#L215
+     */
+    protected static function extractNameFromReflexionType(\ReflectionType $reflectionType){
+        return $reflectionType instanceof \ReflectionNamedType ? $reflectionType->getName() : $reflectionType->__toString();
     }
 }
