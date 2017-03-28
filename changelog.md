@@ -1,3 +1,7 @@
+### [2.1.4](../../compare/2.1.3...2.1.4) (2017-03-28)
+
+- [Desjardins Jérôme](https://github.com/jewome62) Fix PHP 7.0.0 and 7.0.1 ReflectionMethod::getReturnType()::getName() who is protected, should be public as of 7.1.2
+
 ### [2.1.3](../../compare/2.1.2...2.1.3) (2017-03-24)
 
 - Fix PHP 7.1.0 and 7.1.1 ReflectionMethod::getReturnType()::getName() who is protected, should be public as of 7.1.2
