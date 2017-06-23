@@ -75,7 +75,20 @@ class $proxyClassName extends \\$entityClassName implements \\$readOnlyInterface
 
 $proxyMethodsCode
 
-    protected function assertReadOnlyPropertiesAreLoaded(array \$properties)
+    public function isReadOnlyPropertiesLoaded(array \$properties)
+    {
+        \$return = true;
+        foreach (\$properties as \$property) {
+            if (in_array(\$property, \$this->loadedProperties) === false) {
+                \$return = false;
+                break;
+            }
+        }
+
+        return \$return;
+    }
+
+    public function assertReadOnlyPropertiesAreLoaded(array \$properties)
     {
         foreach (\$properties as \$property) {
             if (in_array(\$property, \$this->loadedProperties) === false) {
