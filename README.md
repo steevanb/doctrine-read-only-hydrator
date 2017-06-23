@@ -1,9 +1,9 @@
-[![version](https://img.shields.io/badge/version-2.1.4-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.1.4)
+[![version](https://img.shields.io/badge/version-2.2.0-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.2.0)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.doctrine-project.org)
-![Lines](https://img.shields.io/badge/code%20lines-1190-green.svg)
+![Lines](https://img.shields.io/badge/code%20lines-1214-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-read-only-hydrator/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/bd1b7a42-6a2c-4918-9986-3361dd40cc86/analyses/20)
+[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/bd1b7a42-6a2c-4918-9986-3361dd40cc86/analyses/24)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/)
 
 doctrine-read-only-hydrator
@@ -47,7 +47,7 @@ SimpleObjectHydrator and ReadOnlyHydrator are provided with this lib, see exampl
 
 ![benchmark](benchmark.png)
 
-You can see how slow is Hydration process ! For 5 000 entities, Doctrine ObjectHydrator is 100x slower than the SQL request...
+You can see hydration process is really slow ! For 5 000 entities, Doctrine ObjectHydrator is 100x slower than the SQL request...
 
 As expected, getArrayResult() is the fastest way to retrieve data.
 But, you have to work with array, so you can't use entity methods.
@@ -60,7 +60,7 @@ SimpleObjectHydrator
 --------------------
 
 * Hydrate your entity, with all selected fields in your QueryBuilder. If you try to access a non-loaded property,
-no exception will be throwned, you can do what you want with this entity.
+no exception will be throwned, you can call all accessors.
 * No lazy loading will be executed.
 * You can't persist or flush this entity.
 * Usefull when you want to be faster than Doctrine ObjectHydrator (and a little little bit more than ReadOnlyHydrator),
@@ -89,7 +89,7 @@ class BarRepository
     {
         return $this
             ->createQueryBuilder('user')
-            ->select('user', 'comments')
+            ->select('user', 'PARTIAL comments.{id, comment}')
             ->join('user.comments', 'comments')
             ->where('user.id = :id')
             ->setParameter('id', $id)
@@ -103,7 +103,7 @@ Installation
 ------------
 
 ```bash
-composer require steevanb/doctrine-read-only-hydrator ^2.1
+composer require steevanb/doctrine-read-only-hydrator ^2.2
 ```
 
 Symfony 2.x or 3.x integration

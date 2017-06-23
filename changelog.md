@@ -1,3 +1,10 @@
+### [2.2.0](../../compare/2.1.4...2.2.0) (2017-06-23)
+
+ReadOnlyInterface is changed. I should create a 3.0.0 instead of 2.2.0, but I assume this BC will not break your code, cause it's internal code.
+- [BC] Add ReadOnlyInterface::isReadOnlyPropertiesLoaded()
+- [BC] Add ReadOnlyInterface::assertReadOnlyPropertiesAreLoaded()
+- ReadOnlyHydrator::assertReadOnlyPropertiesAreLoaded() from protected to public
+
 ### [2.1.4](../../compare/2.1.3...2.1.4) (2017-03-28)
 
 - [Desjardins Jérôme](https://github.com/jewome62) Fix PHP 7.0.0 and 7.0.1 ReflectionMethod::getReturnType()::getName() who is protected, should be public as of 7.1.2
