@@ -1,3 +1,7 @@
+### [2.2.1](../../compare/2.2.0...2.2.1) (2017-09-04)
+
+- Fix ReadOnlyProxy not added to classMetadata list, you can now use $queryBuilder->getParameter('foo', $foo) instead of $queryBuilder->getParameter('foo', $foo->getId()
+
 ### [2.2.0](../../compare/2.1.4...2.2.0) (2017-06-23)
 
 ReadOnlyInterface is changed. I should create a 3.0.0 instead of 2.2.0, but I assume this BC will not break your code, cause it's internal code.

@@ -14,15 +14,14 @@ use steevanb\DoctrineReadOnlyHydrator\Exception\ReadOnlyEntityCantBePersistedExc
 
 class ReadOnlySubscriber implements EventSubscriber
 {
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getSubscribedEvents()
     {
         return [
             Events::prePersist,
             Events::preFlush,
-            Events::onClassMetadataNotFound
+            Events::onClassMetadataNotFound,
+            Events::postLoad
         ];
     }
 
@@ -56,9 +55,7 @@ class ReadOnlySubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param OnClassMetadataNotFoundEventArgs $eventArgs
-     */
+    /** @param OnClassMetadataNotFoundEventArgs $eventArgs */
     public function onClassMetadataNotFound(OnClassMetadataNotFoundEventArgs $eventArgs)
     {
         if (class_implements(
@@ -68,6 +65,18 @@ class ReadOnlySubscriber implements EventSubscriber
             $eventArgs->setFoundMetadata(
                 $eventArgs->getObjectManager()->getClassMetadata(get_parent_class($eventArgs->getClassName()))
             );
+        }
+    }
+
+    /** @param LifecycleEventArgs $eventArgs */
+    public function postLoad(LifecycleEventArgs $eventArgs)
+    {
+        if ($eventArgs->getObject() instanceof ReadOnlyEntityInterface) {
+            // add ReadOnlyProxy to classMetada list
+            // without it, you can't use Doctrine automatic id finder
+            // like $queryBuilder->setParameter('foo', $foo)
+            // instead of  $queryBuilder->setParameter('foo', $foo->getId())
+            $eventArgs->getObjectManager()->getClassMetadata(get_class($eventArgs->getObject()));
         }
     }
 
