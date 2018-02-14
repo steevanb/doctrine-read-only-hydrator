@@ -1,9 +1,9 @@
-[![version](https://img.shields.io/badge/version-2.2.1-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.2.1)
+[![version](https://img.shields.io/badge/version-2.2.2-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.2.2)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.doctrine-project.org)
-![Lines](https://img.shields.io/badge/code%20lines-1227-green.svg)
+![Lines](https://img.shields.io/badge/code%20lines-1226-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-read-only-hydrator/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/bd1b7a42-6a2c-4918-9986-3361dd40cc86/analyses/27)
+[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/bd1b7a42-6a2c-4918-9986-3361dd40cc86/analyses/30)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/)
 
 doctrine-read-only-hydrator

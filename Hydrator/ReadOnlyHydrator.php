@@ -170,7 +170,7 @@ PHP;
     /**
      * @param \ReflectionMethod $reflectionMethod
      * @param array $properties
-     * @return string|false
+     * @return array
      */
     protected function getUsedProperties(\ReflectionMethod $reflectionMethod, $properties)
     {
@@ -276,11 +276,16 @@ PHP;
                     case 'parent':
                         throw new \Exception('Function with return type parent can\'t be overloaded.');
                     default:
-                        $returnType = $this->getFullQualifiedClassName(static::extractNameFromReflexionType($reflectionMethod->getReturnType()));
+                        $returnType = $this->getFullQualifiedClassName(
+                            static::extractNameFromReflexionType($reflectionMethod->getReturnType())
+                        );
                 }
             }
+            $returnKeyWord = ($returnType === 'void') ? null : 'return ';
 
             $signature .= $returnType;
+        } else {
+            $returnKeyWord = 'return ';
         }
 
         $php = <<<PHP
@@ -288,7 +293,7 @@ PHP;
     {
         \$this->assertReadOnlyPropertiesAreLoaded(array($propertiesToAssert));
 
-        return call_user_func_array(array('parent', '$method'), func_get_args());
+        ${returnKeyWord}call_user_func_array(array('parent', '$method'), func_get_args());
     }
 PHP;
 

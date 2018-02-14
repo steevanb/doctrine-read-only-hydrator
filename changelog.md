@@ -1,3 +1,7 @@
+### [2.2.2](../../compare/2.2.1...2.2.2) (2018-02-14)
+
+- Fix ReadOnly method proxy return when parent return type is void
+
 ### [2.2.1](../../compare/2.2.0...2.2.1) (2017-09-04)
 
 - Fix ReadOnlyProxy not added to classMetadata list, you can now use $queryBuilder->getParameter('foo', $foo) instead of $queryBuilder->getParameter('foo', $foo->getId()
