@@ -1,7 +1,7 @@
-[![version](https://img.shields.io/badge/version-2.2.2-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.2.2)
+[![version](https://img.shields.io/badge/version-2.2.3-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.2.3)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.doctrine-project.org)
-![Lines](https://img.shields.io/badge/code%20lines-1232-green.svg)
+![Lines](https://img.shields.io/badge/code%20lines-1236-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-read-only-hydrator/downloads)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/)
 
