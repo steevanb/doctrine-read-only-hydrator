@@ -1,13 +1,11 @@
 [![version](https://img.shields.io/badge/version-2.2.2-green.svg)](https://github.com/steevanb/doctrine-read-only-hydrator/tree/2.2.2)
 [![doctrine](https://img.shields.io/badge/doctrine/orm-^2.4.8-blue.svg)](http://www.doctrine-project.org)
 [![php](https://img.shields.io/badge/php-^5.4.6%20||%20^7.0-blue.svg)](http://www.doctrine-project.org)
-![Lines](https://img.shields.io/badge/code%20lines-1226-green.svg)
+![Lines](https://img.shields.io/badge/code%20lines-1232-green.svg)
 ![Total Downloads](https://poser.pugx.org/steevanb/doctrine-read-only-hydrator/downloads)
-[![SensionLabsInsight](https://img.shields.io/badge/SensionLabsInsight-platinum-brightgreen.svg)](https://insight.sensiolabs.com/projects/bd1b7a42-6a2c-4918-9986-3361dd40cc86/analyses/30)
 [![Scrutinizer](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/steevanb/doctrine-read-only-hydrator/)
 
-doctrine-read-only-hydrator
----------------------------
+## doctrine-read-only-hydrator
 
 When you retrieve data with Doctrine, you can get an array with values, or a fully hydrated object.
 
@@ -28,8 +26,7 @@ who return everything you need.
 
 [Changelog](changelog.md)
 
-Benchmark
----------
+## Benchmark
 
 This table show simple benchmark results (time and memory_get_peak_usage()), with 30, 1000 and 5000 entities retrieved
 from a MySQL 5.7 database, PHP 5.6.23 and Doctrine 2.5.4.
@@ -56,8 +53,7 @@ ReadOnlyHydrator is 4x faster than Doctrine ObjectHydrator, and only 40% slower 
 
 Is you want to be as fast as possible, but with an entity result instead of an array, SimpleObjectHydrator looks pretty good.
 
-SimpleObjectHydrator
---------------------
+## SimpleObjectHydrator
 
 * Hydrate your entity, with all selected fields in your QueryBuilder. If you try to access a non-loaded property,
 no exception will be throwned, you can call all accessors.
@@ -66,8 +62,7 @@ no exception will be throwned, you can call all accessors.
 * Usefull when you want to be faster than Doctrine ObjectHydrator (and a little little bit more than ReadOnlyHydrator),
 you don't want to insert / update this entity, but doesn't ensure you can't access non-loaded property.
 
-ReadOnlyHydrator
-----------------
+## ReadOnlyHydrator
 
 * Hydrate a proxy of your entity, who throw an exception if you try to access a property who is not loaded by your QueryBuilder.
 * No lazy loading will be executed.
@@ -75,8 +70,7 @@ ReadOnlyHydrator
 * Usefull when you want to be faster than Doctrine ObjectHydrator, you don't want to insert / update this entity, and
 be "sure" any access to a non-loaded property will throw an exception.
 
-Example
--------
+## Example
 
 ```php
 # Foo\Repository\BarRepository
@@ -99,15 +93,13 @@ class BarRepository
 }
 ```
 
-Installation
-------------
+## Installation
 
 ```bash
 composer require steevanb/doctrine-read-only-hydrator ^2.2
 ```
 
-Symfony 2.x or 3.x integration
-------------------------------
+### Symfony 2.x or 3.x integration
 
 ```php
 # app/AppKernel.php
@@ -123,10 +115,20 @@ class AppKernel extends Kernel
 }
 ```
 
-Manual integration
-------------------
+### Symfony 4.x or 5.x integration
 
-You need to register SimpleObjectHydrator and ReadOnlyHydrator to Doctrine\ORM\Configuration :
+```php
+# config/bundles.php
+
+return [
+    steevanb\DoctrineReadOnlyHydrator\Bridge\ReadOnlyHydratorBundle\ReadOnlyHydratorBundle::class => ['all' => true],
+];
+
+```
+
+### Manual integration
+
+You need to register `SimpleObjectHydrator` and `ReadOnlyHydrator` to `Doctrine\ORM\Configuration`:
 
 ```php
 use steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator;
@@ -136,8 +138,7 @@ $configuration->addCustomHydrationMode(SimpleObjectHydrator::HYDRATOR_NAME, Simp
 $configuration->addCustomHydrationMode(ReadOnlyHydrator::HYDRATOR_NAME, ReadOnlyHydrator::class);
 ```
 
-Integration with steevanb/doctrine-stats
-----------------------------------------
+### Integration with steevanb/doctrine-stats
 
 [steevanb/doctrine-stats](https://github.com/steevanb/doctrine-stats) add lots of statistics about Doctrine :
 number of mapped entities, number of lazy loaded entities, collapse and count same sql queries, show hydration time etc.

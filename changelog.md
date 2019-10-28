@@ -1,3 +1,7 @@
+### [2.2.3](../../compare/2.2.1...2.2.2) (2019-10-28)
+
+- Add try / catch in ReadOnlySubscriber to catch empty class name exception throwned by class_implements()
+
 ### [2.2.2](../../compare/2.2.1...2.2.2) (2018-02-14)
 
 - Fix ReadOnly method proxy return when parent return type is void

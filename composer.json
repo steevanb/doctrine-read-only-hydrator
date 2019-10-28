@@ -2,7 +2,6 @@
     "name": "steevanb/doctrine-read-only-hydrator",
     "license": "MIT",
     "description": "Fast hydratation for read only purpose",
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": { "steevanb\\DoctrineReadOnlyHydrator\\": "" }
     },
@@ -12,11 +11,5 @@
     },
     "suggest": {
         "steevanb/doctrine-stats": "Add Doctrine stats : hydration time, lazy loaded entities, managed entities etc."
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/steevanb/doctrine-read-only-hydrator.git"
-        }
-    ]
+    }
 }
