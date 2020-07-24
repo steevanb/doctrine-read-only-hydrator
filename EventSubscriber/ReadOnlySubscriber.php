@@ -58,16 +58,17 @@ class ReadOnlySubscriber implements EventSubscriber
     /** @param OnClassMetadataNotFoundEventArgs $eventArgs */
     public function onClassMetadataNotFound(OnClassMetadataNotFoundEventArgs $eventArgs)
     {
-        try {
-            if (class_implements(
-                $eventArgs->getClassName(),
-                'steevanb\\DoctrineReadOnlyHydrator\\Entity\\ReadOnlyEntityInterface'
-            )) {
-                $eventArgs->setFoundMetadata(
-                    $eventArgs->getObjectManager()->getClassMetadata(get_parent_class($eventArgs->getClassName()))
-                );
-            }
-        } catch (\Exception $exception) {}
+        $interfaces = @class_implements($eventArgs->getClassName());
+
+        if (!$interfaces) {
+            return;
+        }
+
+        if (in_array('steevanb\\DoctrineReadOnlyHydrator\\Entity\\ReadOnlyEntityInterface', $interfaces, true)) {
+            $eventArgs->setFoundMetadata(
+                $eventArgs->getObjectManager()->getClassMetadata(get_parent_class($eventArgs->getClassName()))
+            );
+        }
     }
 
     /** @param LifecycleEventArgs $eventArgs */
