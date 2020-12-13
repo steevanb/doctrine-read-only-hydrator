@@ -3,7 +3,10 @@
     "license": "MIT",
     "description": "Fast hydratation for read only purpose",
     "autoload": {
-        "psr-4": { "steevanb\\DoctrineReadOnlyHydrator\\": "" }
+        "psr-4": { "steevanb\\DoctrineReadOnlyHydrator\\": "" },
+        "exclude-from-classmap": [
+            "/ComposerOverloadClass/"
+        ]
     },
     "require": {
         "php" : "^5.4.6 || ^7.0",
