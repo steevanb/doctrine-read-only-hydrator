@@ -1,4 +1,8 @@
-### [2.2.3](../../compare/2.2.1...2.2.2) (2019-10-28)
+### [2.2.4](../../compare/2.2.3...2.2.4) (2020-12-15)
+
+- [maxhelias](https://github.com/maxhelias) Fix Composer autoload error with ComposerOverloadClass directory
+
+### [2.2.3](../../compare/2.2.2...2.2.3) (2019-10-28)
 
 - Add try / catch in ReadOnlySubscriber to catch empty class name exception throwned by class_implements()
 
