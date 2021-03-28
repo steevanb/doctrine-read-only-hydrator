@@ -1,3 +1,7 @@
+### [2.2.4](../../compare/2.2.4...2.3.0) (2021-03-28)
+
+- [lerminou](https://github.com/lerminou) Allow PHP8 in `composer.json`
+
 ### [2.2.4](../../compare/2.2.3...2.2.4) (2020-12-15)
 
 - [maxhelias](https://github.com/maxhelias) Fix Composer autoload error with ComposerOverloadClass directory
