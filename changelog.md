@@ -1,4 +1,4 @@
-### [2.2.4](../../compare/2.2.4...2.3.0) (2021-03-28)
+### [2.3.0](../../compare/2.2.4...2.3.0) (2021-03-28)
 
 - [lerminou](https://github.com/lerminou) Allow PHP8 in `composer.json`
 
