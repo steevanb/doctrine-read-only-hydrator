@@ -103,7 +103,17 @@ class SimpleObjectHydrator extends ArrayHydrator
                    continue;
                }
             } else {
-                $property = $reflection->getProperty($name);
+                for (;;) {
+                    try {
+                        $property = $reflection->getProperty($name);
+                        break;
+                    } catch (\ReflectionException $e) {}
+
+                    $reflection = $reflection->getParentClass();
+                    if ($reflection === false) {
+                        throw new \Exception("Can't find attribute '$name' in $className");
+                    }
+                }
             }
 
             if ($property->isPublic()) {
