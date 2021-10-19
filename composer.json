@@ -3,16 +3,23 @@
     "license": "MIT",
     "description": "Fast hydratation for read only purpose",
     "autoload": {
-        "psr-4": { "steevanb\\DoctrineReadOnlyHydrator\\": "" },
+        "psr-4": {
+            "steevanb\\DoctrineReadOnlyHydrator\\": ""
+        },
         "exclude-from-classmap": [
             "/ComposerOverloadClass/"
         ]
     },
     "require": {
-        "php" : "^5.4.6 || ^7.0 || ^8.0",
-        "doctrine/orm": "^2.4.8"
+        "php": "^5.4.6 || ^7.0 || ^8.0",
+        "ext-tokenizer": "*",
+        "doctrine/collections": "^1.1",
+        "doctrine/orm": "^2.5"
     },
     "suggest": {
-        "steevanb/doctrine-stats": "Add Doctrine stats : hydration time, lazy loaded entities, managed entities etc."
+        "steevanb/doctrine-stats": "Add Doctrine stats: hydration time, lazy loaded entities, managed entities etc."
+    },
+    "config": {
+        "sort-packages": true
     }
 }
