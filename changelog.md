@@ -1,3 +1,8 @@
+### [2.4.0](../../compare/2.3.0...2.4.0) (2021-10-19)
+
+- Update dependency: `doctrine/orm` from `^2.4.8` to `^2.5`, it was not working with `2.4`
+- Add dependencies (it was already used by previous version): `doctrine/collections`
+
 ### [2.3.0](../../compare/2.2.4...2.3.0) (2021-03-28)
 
 - [lerminou](https://github.com/lerminou) Allow PHP8 in `composer.json`
