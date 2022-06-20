@@ -2,10 +2,10 @@
 
 namespace steevanb\DoctrineReadOnlyHydrator\EventSubscriber;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClassMetadataNotFoundEventArgs;
 use steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
 use steevanb\DoctrineReadOnlyHydrator\Entity\ReadOnlyEntityInterface;
@@ -58,16 +58,20 @@ class ReadOnlySubscriber implements EventSubscriber
     /** @param OnClassMetadataNotFoundEventArgs $eventArgs */
     public function onClassMetadataNotFound(OnClassMetadataNotFoundEventArgs $eventArgs)
     {
-        try {
-            if (class_implements(
-                $eventArgs->getClassName(),
-                'steevanb\\DoctrineReadOnlyHydrator\\Entity\\ReadOnlyEntityInterface'
-            )) {
-                $eventArgs->setFoundMetadata(
-                    $eventArgs->getObjectManager()->getClassMetadata(get_parent_class($eventArgs->getClassName()))
-                );
+        $implements = class_implements($eventArgs->getClassName());
+        if (is_array($implements)) {
+            foreach ($implements as $implement) {
+                if ($implement === ReadOnlyEntityInterface::class) {
+                    $eventArgs->setFoundMetadata(
+                        $eventArgs->getObjectManager()->getClassMetadata(
+                            get_parent_class($eventArgs->getClassName())
+                        )
+                    );
+
+                    break;
+                }
             }
-        } catch (\Exception $exception) {}
+        }
     }
 
     /** @param LifecycleEventArgs $eventArgs */
